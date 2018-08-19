@@ -4,7 +4,9 @@
 
 #ifndef EXPRESSION_EVAL_STACK_H
 #define EXPRESSION_EVAL_STACK_H
-#include <stdlib.h>
+#include <ctype.h>
+#include <memory.h>
+
 /*
 
 DS : Stack
@@ -14,7 +16,8 @@ operations : push , pop , search , size
 
 typedef struct LinkedListInternal
 {
-    char value;
+    void *value;
+    char dataType;
     struct LinkedListInternal *next;
 
 }LinkedList;
@@ -42,13 +45,13 @@ typedef struct stackInternal
 
 //stackoperations : push , pop
 typedef void (*StackOperation_1_wptr)(Stack );
-typedef void (*StackOperation_1)(Stack *);
-typedef void (*StackOperation_2)(Stack *,char);
+typedef LinkedList *(*StackOperation_1)(Stack *);
+typedef void (*StackOperation_3)(Stack *,void *,char);
 
 
 typedef struct StackOperationsInternal
 {
-    StackOperation_2 push;
+    StackOperation_3 push;
     StackOperation_1 pop ;
     StackOperation_1_wptr traverse;
 
@@ -59,37 +62,44 @@ LinkedList operations
 starts:
 */
 
-void LinkedListOperation_2_add(LinkedList **root,char value)
+void LinkedListOperation_3_add(LinkedList **root,void *value,char dataType)
 {
-    if (*root == NULL)
-    {
-        *root = (LinkedList *)malloc(sizeof(LinkedList));
-        (*root)->value = value;
-        (*root)->next = NULL;
-    }
-    else
-    {
-        LinkedList *node;
+       LinkedList *node;
         node = (LinkedList *)malloc(sizeof(LinkedList));
-        node->value = value;
+        if (dataType == 'c')
+        {
+            node->value = (char *) malloc(sizeof(char));
+            node->dataType = 'c';
+            /* using memcpy to copy string: */
+            memcpy(node->value, value,1);
+        }
+        else if(dataType == 'd')
+        {
+            node->value = (int *)malloc(sizeof(int));
+            node->dataType = 'd';
+            /* using memcpy to copy string: */
+            memcpy(node->value, value,1);
+        }
         node->next = *root;
         *root = node;
-    }
 
 }
 
-void LinkedListOperation_1_delete_last_added(LinkedList **root)
+LinkedList *LinkedListOperation_1_delete_last_added(LinkedList **root)
 {
+    void *ptr;
     if (*root == NULL)
     {
-        free(*root);
+        //free(*root);
+        return *root;
     }
     else
     {
         LinkedList *tmp;
         tmp = *root;
         *root = (*root)->next;
-        free(tmp);
+        //free(tmp);
+        return tmp;
     }
 
 }
@@ -103,27 +113,37 @@ End:
 * Stack operations
 *
 */
-void StackOperation_2_push(Stack *S,char value)
+
+void StackOperation_3_push(Stack *S,void *value, char dataType)
 {
-    LinkedListOperation_2_add(&(S->root),value);
+    LinkedListOperation_3_add(&(S->root),value,dataType);
     (S->size)++;
 }
 
-void StackOperation_1_pop(Stack *S)
+LinkedList *StackOperation_1_pop(Stack *S)
 {
-    LinkedListOperation_1_delete_last_added(&(S->root));
     (S->size)--;
+    return LinkedListOperation_1_delete_last_added(&(S->root));
 
 }
 
 void StackOperation_1_traverse(Stack S)
 {
     LinkedList *current;
+    char *val;
     int count = S.size;
     current = S.root;
+
     while (count)
     {
-        printf("value=%c\n",current->value);
+        val = current->value;
+        if (current->dataType == 'd') {
+            printf("value=%d\n",*val);
+        }
+        else if(current->dataType =='c') {
+            printf("value=%c\n",*val);
+        }
+
         current = current->next;
         count--;
     }
