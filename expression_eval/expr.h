@@ -6,6 +6,7 @@
 #define EXPRESSION_EVAL_EXPR_H
 
 #include <stdio.h>
+#include <math.h>
 #include "stack.h"
 #include "utils.h"
 
@@ -22,6 +23,7 @@ void pop_til_death_stack(Stack *post_fix , Stack *operators)
         if((c == LEFT_BRACKET) || (c == RIGHT_BRACKET))
             printf("Invalid Infix form");
         Stack_op.push(post_fix,L1->value,L1->dataType);
+        pop_til_death_stack(post_fix,operators);
     }
 }
 
@@ -118,6 +120,7 @@ void infix_to_postfix(char *array , int index , Stack *post_fix , Stack *operato
           {
               //when both operators are of the same precedence eg + and - or * and /
               pop_by_precedence(c,post_fix,operators);
+              Stack_op.push(operators , &c , 'c');
               index = index+1;
               infix_to_postfix(array,index,post_fix,operators,str_lenght);
           }
@@ -139,12 +142,13 @@ void infix_to_postfix(char *array , int index , Stack *post_fix , Stack *operato
   }
 }
 
-int expr(char *str,int str_len)
+int expr(char *str,size_t str_len)
 {
     Stack post_fix_reverse , post_fix , expression , operators;
     LinkedList *L1 ,*L2 ,*L3;
     char data_type, opr;
-    int index=0,val=0;
+    int index=0;
+    int val=0;
     post_fix.size=0;
     operators.size = 0;
     post_fix_reverse.size = 0;
@@ -176,16 +180,16 @@ int expr(char *str,int str_len)
                     val = *(int *)L2->value + *(int *)L3->value;
                     break;
                 case MINUS_OPERATOR:
-                    val = *(int *)L2->value - *(int *)L3->value;
+                    val = *(int *)L3->value - *(int *)L2->value;
                     break;
                 case MULTI_OPERATOR:
                     val = (*(int *)L2->value) * (*(int *)L3->value);
                     break;
                 case DIV_OPERATOR:
-                    val = (*(int *)L2->value) / (*(int *)L3->value);
+                    val = (*(int *)L3->value) / (*(int *)L2->value);
                     break;
                 case POW_OPERATOR:
-                    val = *(int *)L2->value + *(int *)L3->value;
+                    val = (int )pow(*(int *)L3->value , *(int *)L2->value );
                     break;
                 default:
                     printf("Error in evaluation: bad expression.");

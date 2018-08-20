@@ -5,9 +5,10 @@
 #include "expr.h"
 
 int main(int argc, char const *argv[]) {
-    char *str = "2+3";
-    int str_len = strlen(str);
-    printf("%s = %d",str,expr(str , str_len));
+    char *str;
+    str = (char *)argv[1];
+    size_t str_len = strlen(str);
+    printf("\n%s = %d\n",str,expr(str , str_len));
     return 0;
 }
 
