@@ -46,6 +46,7 @@ typedef struct stackInternal
 //stackoperations : push , pop
 typedef void (*StackOperation_1_wptr)(Stack );
 typedef LinkedList *(*StackOperation_1)(Stack *);
+typedef Stack (*StackOperation_reverse)(Stack *);
 typedef void (*StackOperation_3)(Stack *,void *,char);
 
 
@@ -53,6 +54,7 @@ typedef struct StackOperationsInternal
 {
     StackOperation_3 push;
     StackOperation_1 pop ;
+    StackOperation_reverse reverse ;
     StackOperation_1_wptr traverse;
 
 }StackOperations;
@@ -148,6 +150,20 @@ void StackOperation_1_traverse(Stack S)
         count--;
     }
 
+}
+
+Stack StackOperation_1_reverse(Stack *S){
+    Stack reverse;
+    reverse.size = 0;
+    LinkedList *L1;
+    StackOperations Stack_op;
+    Stack_op.push = StackOperation_3_push;
+    Stack_op.pop = StackOperation_1_pop;
+    while(S->size){
+        L1 = Stack_op.pop(S);
+        Stack_op.push(&reverse,L1->value,L1->dataType);
+    }
+    return reverse;
 }
 
 #endif //EXPRESSION_EVAL_STACK_H

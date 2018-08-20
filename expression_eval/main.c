@@ -1,19 +1,13 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "stack.h"
+#include "utils.h"
+#include "expr.h"
 
-int main() {
-    Stack s1 ;
-
-    StackOperations Stack_op;
-    Stack_op.push = StackOperation_2_push;
-    Stack_op.pop = StackOperation_1_pop;
-    Stack_op.traverse = StackOperation_1_traverse;
-
-    Stack_op.push(&s1,'a');
-    Stack_op.push(&s1,'b');
-    Stack_op.pop(&s1);
-    Stack_op.push(&s1,'c');
-    Stack_op.traverse(s1);
+int main(int argc, char const *argv[]) {
+    char *str = "2+3";
+    int str_len = strlen(str);
+    printf("%s = %d",str,expr(str , str_len));
     return 0;
 }
 
