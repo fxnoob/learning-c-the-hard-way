@@ -121,9 +121,10 @@ void parseTreePlease(Tree_ *t , char *str){
                i++;
            }
            else if(isdigit(c)){
-               int num = chars_to_num(i,&i,str,str_lenght);
-               currentNode->data = num;
+               //int num = chars_to_num(i,&i,str,str_lenght);
+               currentNode->data = c;
                currentNode = stack->pop(stack);
+                i++;
            }
            else if(is_operator(c)){
                 currentNode->data = c;
@@ -139,6 +140,41 @@ void parseTreePlease(Tree_ *t , char *str){
     destruct_parsetree_stack(stack);
 }
 
+int toInt(char c){
+    int num = c-'0';
+    return num;
+}
 
+int eval_expr(Tree_ * root)
+{
+    // empty tree
+    if (!root)
+        return 0;
+
+    // leaf node i.e, an integer
+    if (!root->left && !root->right)
+        return toInt(root->data);
+
+    // Evaluate left subtree
+    int l_val = eval_expr(root->left);
+
+    // Evaluate right subtree
+    int r_val = eval_expr(root->right);
+
+    // Check which operator to apply
+    if (root->data== PLUS_OPERATOR )
+        return l_val+r_val;
+
+    if (root->data==MINUS_OPERATOR)
+        return l_val-r_val;
+
+    if (root->data==MULTI_OPERATOR)
+        return l_val*r_val;
+
+    if (root->data==DIV_OPERATOR)
+        return l_val/r_val;
+
+    return l_val/r_val;
+}
 
 #endif //EXPRESSION_EVAL_PARSE_TREE_H

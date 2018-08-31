@@ -3,12 +3,13 @@
 #include "stack.h"
 #include "utils.h"
 #include "expr.h"
+#include "parse_tree.h"
 
 int main(int argc, char const *argv[]) {
-    char *str;
-    str = (char *)argv[1];
-    size_t str_len = strlen(str);
-    printf("\n%s = %d\n",str,expr(str , str_len));
+
+    char str[] = "((4+3)*5)";
+    Tree *T = tree_construct(str);
+    printf("ans=%d",eval_expr(T->T));
     return 0;
 }
 
