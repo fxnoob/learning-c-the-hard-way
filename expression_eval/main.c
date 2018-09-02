@@ -3,13 +3,24 @@
 #include "stack.h"
 #include "utils.h"
 #include "expr.h"
-#include "parse_tree.h"
+#include "generic_queue.h"
 
-int main(int argc, char const *argv[]) {
-
-    char str[] = "((4+3)*5)";
-    Tree *T = tree_construct(str);
-    printf("ans=%d",eval_expr(T->T));
-    return 0;
+int main(int argc, char *argv[])
+{
+    int val;
+    Generic_Queue temp;
+    Generic_Queue intQueue;
+    ini_Generic_Queue(&intQueue, sizeof(int));
+    for (val = 0; val < 6; val++){
+        Generic_Queue_push(&intQueue, &val);
+         //StackPush(&intStack, &val);
+    }
+    while (!empty_Generic_Queue(&intQueue)) {
+        //StackPop(&intStack, &val);
+        Generic_Queue_pop(&intQueue,&val);
+        printf("This just popped: %d\n", val);
+    }
+    destruct_Generic_Queue(&intQueue);
+   return 0;
 }
 
